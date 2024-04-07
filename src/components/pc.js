@@ -1,11 +1,17 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const Pcs = () => {
     const [pcs, setPcs] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
 
     useEffect(() => {
         const traerPcs = async () => {
@@ -14,34 +20,29 @@ const Pcs = () => {
                 setPcs(res.data)
             } catch (err) {
                 console.log(err)
-            };
-
+            }
         };
         traerPcs()
     }, [])
 
-    console.log(pcs)
-
-    const handleDelete = async (id) => {
+    const handleDelete = async () => {
         try {
-            await axios.delete(`http://localhost/xampp/api_rest_php/index.php?id=${id}`);
+            await axios.delete(`http://localhost/xampp/api_rest_php/index.php?id=${selectedId}`);
             window.location.reload();
         } catch (error) {
-            if (error.response) {
-                // El servidor respondió con un código de estado diferente de 2xx
-                console.log('Error de respuesta del servidor:', error.response.data);
-                console.log('Código de estado:', error.response.status);
-            } else if (error.request) {
-                // La solicitud se realizó pero no se recibió respuesta
-                console.log('No se recibió respuesta del servidor:', error.request);
-            } else {
-                // Ocurrió un error al configurar la solicitud
-                console.log('Error al configurar la solicitud:', error.message);
-            }
-            console.log('Error general:', error.config);
+            console.error('Error al eliminar:', error);
         }
     }
-    
+
+    const handleOpenDialog = (id) => {
+        setSelectedId(id);
+        setOpen(true);
+    };
+
+    const handleCloseDialog = () => {
+        setSelectedId(null);
+        setOpen(false);
+    };
 
     return (
         <div className="container">
@@ -64,9 +65,9 @@ const Pcs = () => {
             </thead>
             <tbody>
                 {
-                    pcs.map((pc, ) => {
+                    pcs.map((pc) => {
                         return (
-                            <tr>
+                            <tr key={pc.id}>
                                 <td>{pc.id}</td>
                                 <td>{pc.nombre}</td>
                                 <td>{pc.modelo}</td>
@@ -77,7 +78,7 @@ const Pcs = () => {
                                 <td>{pc.estado_id}</td>
                                 <td>
                                     <Link to={`/update/${pc.id}`} className="btn btn-info mx-2">Edit</Link>
-                                    <button onClick={()=>handleDelete(pc.id)} className="btn btn-danger">Eliminar</button>
+                                    <Button onClick={() => handleOpenDialog(pc.id)} variant="contained" color="secondary">Eliminar</Button>
                                 </td>
                             </tr>
                         )
@@ -87,8 +88,29 @@ const Pcs = () => {
         </table>
                 </div>
             </div>
+            <Dialog
+                open={open}
+                onClose={handleCloseDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">Confirmación de eliminación</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        ¿Estás seguro de que deseas eliminar este PC?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} color="primary">
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleDelete} color="secondary" autoFocus>
+                        Eliminar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     )
 }
 
-export default Pcs
+export default Pcs;
