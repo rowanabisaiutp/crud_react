@@ -22,7 +22,7 @@ const Update = () => {
     };
 
     useEffect(() => {
-        axios.get(`http://localhost:9000/api/${id}`)
+        axios.get(`http://localhost/xampp/api_rest_php/index.php?id=${id}`)
             .then(res => {
                 setPcs(res.data);
             })
@@ -32,7 +32,7 @@ const Update = () => {
     const handleClick = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:9000/api/${id}`, pcs);
+            await axios.put(`http://localhost/xampp/api_rest_php/index.php?id=${id}`, pcs);
             navigate("/");
         } catch (err) {
             console.log(err);

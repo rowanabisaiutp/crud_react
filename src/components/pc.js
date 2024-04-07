@@ -10,7 +10,7 @@ const Pcs = () => {
     useEffect(() => {
         const traerPcs = async () => {
             try {
-                const res = await axios.get('http://localhost:9000/api')
+                const res = await axios.get('http://localhost/xampp/api_rest_php/')
                 setPcs(res.data)
             } catch (err) {
                 console.log(err)
@@ -24,23 +24,34 @@ const Pcs = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:9000/api/${id}`)
-            window.location.reload()
-        }catch (err) {
-            console.log(err)
+            await axios.delete(`http://localhost/xampp/api_rest_php/index.php?id=${id}`);
+            window.location.reload();
+        } catch (error) {
+            if (error.response) {
+                // El servidor respondió con un código de estado diferente de 2xx
+                console.log('Error de respuesta del servidor:', error.response.data);
+                console.log('Código de estado:', error.response.status);
+            } else if (error.request) {
+                // La solicitud se realizó pero no se recibió respuesta
+                console.log('No se recibió respuesta del servidor:', error.request);
+            } else {
+                // Ocurrió un error al configurar la solicitud
+                console.log('Error al configurar la solicitud:', error.message);
+            }
+            console.log('Error general:', error.config);
         }
     }
+    
 
     return (
         <div className="container">
-            <h2 className="w-100 d-flex justify-content-center p-3"> Hola mundo</h2>
+            <h2 className="w-100 d-flex justify-content-center p-3">ADMIN: sala de computo</h2>
             <div className="row">
                 <div className="col-md-12">
                 <p><Link to="/add" className="btn btn-success">Nuevo</Link></p>
                 <table className="table table-bordered">
             <thead>
                 <tr>
-                    <th>Numero</th>
                     <th>id</th>
                     <th>Nombre</th>
                     <th>modelo</th>
@@ -53,10 +64,9 @@ const Pcs = () => {
             </thead>
             <tbody>
                 {
-                    pcs.map((pc, i) => {
+                    pcs.map((pc, ) => {
                         return (
-                            <tr key={i}>
-                                <td>{i + 1}</td>
+                            <tr>
                                 <td>{pc.id}</td>
                                 <td>{pc.nombre}</td>
                                 <td>{pc.modelo}</td>
