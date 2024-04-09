@@ -7,9 +7,13 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import axios from "axios";
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
 
 const Update = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [pcs, setPcs] = useState({
         nombre: '',
         modelo: '',
@@ -17,23 +21,27 @@ const Update = () => {
         nserie: '',
         observacion: '',
         teclado: '',
-        estado_id: ''
+        estado_id: '',
+        mesa_id: ''
     });
-    const [open, setOpen] = useState(false); // Estado del diálogo
-    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost/xampp/api_rest_php/index.php?id=${id}`);
+                setPcs(response.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setPcs((prev) => ({ ...prev, [name]: value }));
     };
-
-    useEffect(() => {
-        axios.get(`http://localhost/xampp/api_rest_php/index.php?id=${id}`)
-            .then(res => {
-                setPcs(res.data);
-            })
-            .catch(err => console.log(err));
-    }, [id]);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -48,41 +56,46 @@ const Update = () => {
             await axios.put(`http://localhost/xampp/api_rest_php/index.php?id=${id}`, pcs);
             navigate("/");
         } catch (err) {
-            console.log(err);
+            console.error('Error updating PC:', err);
         }
     };
 
     return (
         <div className="container">
-            <h1>Edit</h1>
+            <br /><br />
+            <h1>Editar PC</h1>
             <form onSubmit={(e) => { e.preventDefault(); handleClickOpen(); }}>
                 <div className="mb-3">
-                    <label className="form-label">Name:</label>
+                    <label className="form-label">Nombre:</label>
                     <input type="text" className="form-control" value={pcs.nombre} name="nombre" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
-                    <label className="form-label">Model:</label>
+                    <label className="form-label">Modelo:</label>
                     <input type="text" className="form-control" value={pcs.modelo} name="modelo" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
-                    <label className="form-label">Mouse:</label>
-                    <input type="text" className="form-control" value={pcs.mouse} name="mouse" onChange={handleChange} />
+                <label className="form-label">Mouse:</label>
+                    <input type="number" className="form-control" value={pcs.mouse} name="mouse" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
-                    <label className="form-label">Serial Number:</label>
+                    <label className="form-label">Número de Serie:</label>
                     <input type="text" className="form-control" value={pcs.nserie} name="nserie" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
-                    <label className="form-label">Observation:</label>
+                    <label className="form-label">Observación:</label>
                     <input type="text" className="form-control" value={pcs.observacion} name="observacion" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
-                    <label className="form-label">Keyboard:</label>
+                    <label className="form-label">Teclado:</label>
                     <input type="text" className="form-control" value={pcs.teclado} name="teclado" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
-                    <label className="form-label">Status:</label>
+                    <label className="form-label">Estado:</label>
                     <input type="text" className="form-control" value={pcs.estado_id} name="estado_id" onChange={handleChange} />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Mesa:</label>
+                    <input type="text" className="form-control" value={pcs.mesa_id} name="mesa_id" onChange={handleChange} />
                 </div>
                 <Button type="submit" className="btn btn-primary">Guardar cambios</Button>
                 <Link to="/" className="btn btn-danger">Cancelar</Link>

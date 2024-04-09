@@ -7,11 +7,36 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Paper from '@material-ui/core/Paper';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+const columns = [
+  { id: 'nombre', label: 'Nombre', minWidth: 100 },
+  { id: 'modelo', label: 'Modelo', minWidth: 100 },
+  { id: 'nserie', label: 'Número de Serie', minWidth: 100 },
+  { id: 'teclado', label: 'Teclado', minWidth: 100 },
+  { id: 'mouse', label: 'Ratón', minWidth: 100 },
+  { id: 'observacion', label: 'Observación', minWidth: 100 },
+  { id: 'estado', label: 'Estado', minWidth: 100 },
+  { id: 'numero_mesa', label: 'Mesa', minWidth: 100 },
+
+  { id: 'actions', label: 'Edit/Elim', minWidth: 100 }
+];
 
 const Pcs = () => {
     const [pcs, setPcs] = useState([]);
     const [open, setOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(8);
 
     useEffect(() => {
         const traerPcs = async () => {
@@ -28,6 +53,7 @@ const Pcs = () => {
     const handleDelete = async () => {
         try {
             await axios.delete(`http://localhost/xampp/api_rest_php/index.php?id=${selectedId}`);
+            setOpen(false);
             window.location.reload();
         } catch (error) {
             console.error('Error al eliminar:', error);
@@ -44,48 +70,77 @@ const Pcs = () => {
         setOpen(false);
     };
 
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 5));
+        setPage(0);
+    };
+
     return (
         <div className="container">
+            <br></br>
+            <br></br>
+            <br></br>
             <h2 className="w-100 d-flex justify-content-center p-3">ADMIN: sala de computo</h2>
             <div className="row">
                 <div className="col-md-12">
-                <p><Link to="/add" className="btn btn-success">Nuevo</Link></p>
-                <table className="table table-bordered">
-            <thead>
-                <tr>
-                    <th>id</th>
-                    <th>Nombre</th>
-                    <th>modelo</th>
-                    <th>num_serie</th>
-                    <th>teclado</th>
-                    <th>mouse</th>
-                    <th>Observacion</th>
-                    <th>estado_id</th>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                    pcs.map((pc) => {
-                        return (
-                            <tr key={pc.id}>
-                                <td>{pc.id}</td>
-                                <td>{pc.nombre}</td>
-                                <td>{pc.modelo}</td>
-                                <td>{pc.nserie}</td>
-                                <td>{pc.teclado}</td>
-                                <td>{pc.mouse}</td>
-                                <td>{pc.observacion}</td>
-                                <td>{pc.estado_id}</td>
-                                <td>
-                                    <Link to={`/update/${pc.id}`} className="btn btn-info mx-2">Edit</Link>
-                                    <Button onClick={() => handleOpenDialog(pc.id)} variant="contained" color="secondary">Eliminar</Button>
-                                </td>
-                            </tr>
-                        )
-                    })
-                }
-            </tbody>
-        </table>
+                    <p><Link to="/add" className="btn btn-success">Nuevo</Link></p>
+                    <Paper>
+                      <TableContainer>
+                        <Table stickyHeader aria-label="sticky table">
+                          <TableHead>
+                            <TableRow>
+                              {columns.map((column) => (
+                                <TableCell
+                                  key={column.id}
+                                  align="left"
+                                  style={{ minWidth: column.minWidth }}
+                                >
+                                  {column.label}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {pcs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((pc) => {
+                              return (
+                                <TableRow hover role="checkbox" tabIndex={-1} key={pc.id}>
+                                  {columns.map((column) => {
+                                    const value = pc[column.id];
+                                    if (column.id === 'actions') {
+                                      return (
+                                        <TableCell key={column.id} align="left">
+                                          <Link to={`/update/${pc.id}`}><EditIcon color="primary" /></Link>
+                                          <Button onClick={() => handleOpenDialog(pc.id)}><DeleteIcon color="secodary"/></Button>
+                                        </TableCell>
+                                      );
+                                    } else {
+                                      return (
+                                        <TableCell key={column.id} align="left">
+                                          {column.format && typeof value === 'number' ? column.format(value) : value}
+                                        </TableCell>
+                                      );
+                                    }
+                                  })}
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                      <TablePagination
+                        rowsPerPageOptions={[4, 6, 8]}
+                        component="div"
+                        count={pcs.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                      />
+                    </Paper>
                 </div>
             </div>
             <Dialog

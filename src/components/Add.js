@@ -7,6 +7,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
 
 const Add = () => {
     const [pcs, setPcs] = useState({
@@ -16,7 +19,8 @@ const Add = () => {
         teclado: '',
         mouse: '',
         observacion: '',
-        estado_id: ''
+        estado_id: '', // Cambiado de 'estado' a 'estado_id'
+        mesa_id:''
     });
 
     const [open, setOpen] = useState(false); // Estado para controlar si el diálogo está abierto
@@ -46,10 +50,12 @@ const Add = () => {
 
     return (
         <div className="container">
-            <h2 className='w-100 d-flex justify-content-center p-3'>Agregar nuevo PC</h2>
+            <br />
+            <br />
+            <br />
             <div className='row'>
                 <div className='col-md-12'>
-                    <h3>Add Your Detail</h3>
+                    <h3>Agregar nuevo PC</h3>
                     <form>
                         <div className="mb-3 mt-3">
                             <label className="form-label"> Nombre:</label>
@@ -64,16 +70,96 @@ const Add = () => {
                             <input type="text" className="form-control" placeholder="Numero de serie" name="nserie" onChange={handleChange} required />
                         </div>
                         <div className="mb-3 mt-3">
-                            <label className="form-label">observaciones:</label>
-                            <input type="text" className="form-control" placeholder="observaciones" name="observacion" onChange={handleChange} required />
+                            <FormControl className="form-control">
+                                <InputLabel htmlFor="observacion">Observaciones</InputLabel>
+                                <Select
+                                    native
+                                    value={pcs.observacion}
+                                    onChange={handleChange}
+                                    inputProps={{
+                                        name: 'observacion',
+                                        id: 'observacion',
+                                    }}
+                                >
+                                    <option aria-label="None" value="" />
+                                    <option value={'Sin Observación'}>Sin Observación</option>
+                                    <option value={'Con Observación'}>Con Observación</option>
+                                </Select>
+                            </FormControl>
                         </div>
                         <div className="mb-3 mt-3">
-                            <label className="form-label">Teclado</label>
-                            <input type="text" className="form-control" placeholder="Teclado" name="teclado" onChange={handleChange} required />
+                            <FormControl className="form-control">
+                                <InputLabel htmlFor="teclado">Teclado</InputLabel>
+                                <Select
+                                    native
+                                    value={pcs.teclado}
+                                    onChange={handleChange}
+                                    inputProps={{
+                                        name: 'teclado',
+                                        id: 'teclado',
+                                    }}
+                                >
+                                    <option aria-label="None" value="" />
+                                    <option value={'1'}>1</option>
+                                    <option value={'2'}>2</option>
+                                </Select>
+                            </FormControl>
                         </div>
                         <div className="mb-3 mt-3">
-                            <label className="form-label">Activo/inactivo</label>
-                            <input type="text" className="form-control" placeholder="Activo/inactivo" name="estado_id" onChange={handleChange} required />
+                            <FormControl className="form-control">
+                                <InputLabel htmlFor="mouse">Mouse</InputLabel>
+                                <Select
+                                    native
+                                    value={pcs.mouse}
+                                    onChange={handleChange}
+                                    inputProps={{
+                                        name: 'mouse',
+                                        id: 'mouse',
+                                    }}
+                                >
+                                    <option aria-label="None" value="" />
+                                    <option value={'1'}>1</option>
+                                    <option value={'2'}>2</option>
+                                </Select>
+                            </FormControl>
+                        </div>
+                        <div className="mb-3 mt-3">
+                            <FormControl className="form-control">
+                                <InputLabel htmlFor="estado_id">Activo/inactivo</InputLabel>
+                                <Select
+                                    native
+                                    value={pcs.estado_id}
+                                    onChange={handleChange}
+                                    inputProps={{
+                                        name: 'estado_id',
+                                        id: 'estado_id',
+                                    }}
+                                >
+                                    <option aria-label="None" value="" />
+                                    <option value={'1'}>1</option>
+                                    <option value={'2'}>2</option>
+                                    <option value={'3'}>3</option>
+                                </Select>
+                            </FormControl>
+                        </div>
+                        <div className="mb-3 mt-3">
+                            <FormControl className="form-control">
+                                <InputLabel htmlFor="estado_id">Mesa</InputLabel>
+                                <Select
+                                    native
+                                    value={pcs.mesa_id}
+                                    onChange={handleChange}
+                                    inputProps={{
+                                        name: 'mesa_id',
+                                        id: 'mesa_id',
+                                    }}
+                                >
+                                    <option aria-label="None" value="" />
+                                    <option value={'1'}>1</option>
+                                    <option value={'2'}>2</option>
+                                    <option value={'3'}>3</option>
+                                </Select>
+                            </FormControl>
                         </div>
                         <button type="button" className="btn btn-primary" onClick={handleClickOpen}>Agregar nuevo PC</button>
                         <Link to="/" className="btn btn-danger">Cancelar</Link>
