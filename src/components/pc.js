@@ -26,6 +26,7 @@ const columns = [
   { id: 'mouse', label: 'Ratón', minWidth: 100 },
   { id: 'observacion', label: 'Observación', minWidth: 100 },
   { id: 'estado', label: 'Estado', minWidth: 100 },
+  { id: 'estado_id', label: 'Num estado', minWidth: 100 },
   { id: 'numero_mesa', label: 'Mesa', minWidth: 100 },
 
   { id: 'actions', label: 'Edit/Elim', minWidth: 100 }
@@ -36,12 +37,12 @@ const Pcs = () => {
     const [open, setOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(8);
+    const [rowsPerPage, setRowsPerPage] = useState(6);
 
     useEffect(() => {
         const traerPcs = async () => {
             try {
-                const res = await axios.get('http://localhost/xampp/api_rest_php/')
+                const res = await axios.get('https://octavoapi.fly.dev/api')
                 setPcs(res.data)
             } catch (err) {
                 console.log(err)
@@ -52,7 +53,7 @@ const Pcs = () => {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`http://localhost/xampp/api_rest_php/index.php?id=${selectedId}`);
+            await axios.delete(`https://octavoapi.fly.dev/api/{selectedId}`);
             setOpen(false);
             window.location.reload();
         } catch (error) {

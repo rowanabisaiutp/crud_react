@@ -10,6 +10,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
+//pass database = "UqesG5Qs4C]PGDl?;"
 
 const Add = () => {
     const [pcs, setPcs] = useState({
@@ -41,8 +42,9 @@ const Add = () => {
     const handleConfirm = async () => {
         setOpen(false); // Cerrar el diálogo
         try {
-            await axios.post("http://localhost/xampp/api_rest_php/index.php", pcs);
+            await axios.post("https://octavoapi.fly.dev/api", pcs);
             navigate("/");
+            console.log(pcs)
         } catch (err) {
             console.log(err);
         }

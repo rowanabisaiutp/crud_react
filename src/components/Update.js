@@ -14,7 +14,7 @@ import Select from '@material-ui/core/Select';
 const Update = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [pcs, setPcs] = useState({
+    const [pc, setPc] = useState({
         nombre: '',
         modelo: '',
         mouse: '',
@@ -29,8 +29,18 @@ const Update = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost/xampp/api_rest_php/index.php?id=${id}`);
-                setPcs(response.data);
+                const response = await axios.get(`https://octavoapi.fly.dev/api/${id}`);
+                const data = response.data[0]; // Acceder al primer elemento del arreglo
+                setPc({
+                    nombre: data.nombre,
+                    modelo: data.modelo,
+                    mouse: data.mouse,
+                    nserie: data.nserie,
+                    observacion: data.observacion,
+                    teclado: data.teclado,
+                    estado_id: data.estado_id,
+                    mesa_id: data.mesa_id
+                });
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -40,7 +50,7 @@ const Update = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setPcs((prev) => ({ ...prev, [name]: value }));
+        setPc((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleClickOpen = () => {
@@ -53,7 +63,7 @@ const Update = () => {
 
     const handleConfirm = async () => {
         try {
-            await axios.put(`http://localhost/xampp/api_rest_php/index.php?id=${id}`, pcs);
+            await axios.put(`https://octavoapi.fly.dev/api/${id}`, pc);
             navigate("/");
         } catch (err) {
             console.error('Error updating PC:', err);
@@ -67,35 +77,35 @@ const Update = () => {
             <form onSubmit={(e) => { e.preventDefault(); handleClickOpen(); }}>
                 <div className="mb-3">
                     <label className="form-label">Nombre:</label>
-                    <input type="text" className="form-control" value={pcs.nombre} name="nombre" onChange={handleChange} />
+                    <input type="text" className="form-control" value={pc.nombre} name="nombre" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Modelo:</label>
-                    <input type="text" className="form-control" value={pcs.modelo} name="modelo" onChange={handleChange} />
+                    <input type="text" className="form-control" value={pc.modelo} name="modelo" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
-                <label className="form-label">Mouse:</label>
-                    <input type="number" className="form-control" value={pcs.mouse} name="mouse" onChange={handleChange} />
+                    <label className="form-label">Mouse:</label>
+                    <input type="number" className="form-control" value={pc.mouse} name="mouse" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Número de Serie:</label>
-                    <input type="text" className="form-control" value={pcs.nserie} name="nserie" onChange={handleChange} />
+                    <input type="text" className="form-control" value={pc.nserie} name="nserie" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Observación:</label>
-                    <input type="text" className="form-control" value={pcs.observacion} name="observacion" onChange={handleChange} />
+                    <input type="text" className="form-control" value={pc.observacion} name="observacion" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Teclado:</label>
-                    <input type="text" className="form-control" value={pcs.teclado} name="teclado" onChange={handleChange} />
+                    <input type="text" className="form-control" value={pc.teclado} name="teclado" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Estado:</label>
-                    <input type="text" className="form-control" value={pcs.estado_id} name="estado_id" onChange={handleChange} />
+                    <input type="text" className="form-control" value={pc.estado_id} name="estado_id" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Mesa:</label>
-                    <input type="text" className="form-control" value={pcs.mesa_id} name="mesa_id" onChange={handleChange} />
+                    <input type="text" className="form-control" value={pc.mesa_id} name="mesa_id" onChange={handleChange} />
                 </div>
                 <Button type="submit" className="btn btn-primary">Guardar cambios</Button>
                 <Link to="/" className="btn btn-danger">Cancelar</Link>
